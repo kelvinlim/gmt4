@@ -253,6 +253,7 @@ class gameButtonState extends State<gameButton> {
   }
   @override
   //build actual GUI of "gamebutton" - a flatbutton with an icon hidden within it (either check or X)
+  //todo - How to create the grid based on the shortest dimension of the rectangle?  This is to avoid the error bars.
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
