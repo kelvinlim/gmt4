@@ -127,6 +127,8 @@ class gameButtonState extends State<gameButton> {
   //function executed when any button pressed
   void buttonPress()
   {
+    //add button id pressed, regardless of corectness, to list of moves
+    moves.add(widget.id);
     //first prevent uesr from making new moves during 250 milisecond animation
     timeOut = true;
     times.add(clock.elapsedMilliseconds);
@@ -215,7 +217,6 @@ class gameButtonState extends State<gameButton> {
       }
 
     });
-    moves.add(widget.id);
     recentMove=widget.id;
   }
   @override
