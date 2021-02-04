@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:convert';
-import 'package:path_provider/path_provider.dart';
 import 'PathGeneration.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'server.dart';
 import 'main.dart';
 
@@ -124,6 +121,8 @@ class gameButtonState extends State<gameButton> {
   //function executed when any button pressed
   void buttonPress()
   {
+    //first add id of button pressed to list of moves
+    moves.add(widget.id);
     //first prevent uesr from making new moves during 250 milisecond animation
     timeOut = true;
     times.add(clock.elapsedMilliseconds);
@@ -212,7 +211,6 @@ class gameButtonState extends State<gameButton> {
       }
 
     });
-    moves.add(widget.id);
     recentMove=widget.id;
   }
   @override
