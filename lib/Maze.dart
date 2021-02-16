@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'PathGeneration.dart';
 import 'server.dart';
 import 'main.dart';
+import 'instructions.dart';
 
 class gameButton extends StatefulWidget {
   int id;
@@ -298,6 +299,18 @@ class mazeState extends State<maze> {
 
                   }
               ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  icon: Icon(Icons.help),
+                  onPressed:() {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(builder: (ctxt) => new SecondScreen()),
+                    );
+                  },
+                ),
+              )
             ]
         ),
       ),
@@ -316,13 +329,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Center(child: Text("GMT")),
-        ),
-        body: Center(
-          child: maze1,
-        )
+    return Container(
+      child: Scaffold(
+          appBar: AppBar(
+            title: Center(child: Text("GMT")),
+          ),
+      ),
     );
   }
 }

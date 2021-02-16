@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'main.dart';
 import 'server.dart';
+import 'instructions.dart';
 //initialize new maze
 maze maze2= new maze();
 Color color1 = Colors.grey;
@@ -142,7 +143,7 @@ class gameButtonState extends State<gameButton> {
   void resetGame()
   {
     //reinitialize variables to default
-    moves = [];
+    moves2 = [];
     correctMoves2 = {};
     consecErrors2 = 0;
     lastMove = 0; //records last CORRECT move of user
@@ -154,6 +155,7 @@ class gameButtonState extends State<gameButton> {
   //function executed when any button pressed
   void buttonPress()
   {
+    moves2.add(widget.id);
     times2.add(clock2.elapsedMilliseconds);
     //first prevent uesr from making new moves during 250 milisecond animation
     timeOut2 = true;
@@ -244,7 +246,6 @@ class gameButtonState extends State<gameButton> {
       }
 
     });
-    moves2.add(widget.id);
     recentMove2=widget.id;
   }
   @override
@@ -332,6 +333,20 @@ class mazeState extends State<maze> {
 
                   }
               ),
+
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  icon: Icon(Icons.help),
+                  onPressed:() {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(builder: (ctxt) => new SecondScreen()),
+                    );
+                  },
+                ),
+              )
+
             ]
         ),
       ),
