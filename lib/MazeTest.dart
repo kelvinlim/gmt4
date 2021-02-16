@@ -1,11 +1,16 @@
 //import necessary packages
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'main.dart';
 import 'server.dart';
 import 'instructions.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = Uuid();
+
 //initialize new maze
 maze maze2= new maze();
 Color color1 = Colors.grey;
@@ -22,6 +27,7 @@ bool timeOut2 = false; //when true, user is prohibited from entering new moves (
 int attemptNum2 = 1;
 int consecErrors2 = 0;
 int recentMove2; //records last move of user regardless of corectness
+
 
 void main() {
   runApp(MyApp());
@@ -189,7 +195,7 @@ class gameButtonState extends State<gameButton> {
         if(widget.id==35) {
           var dict2 = {"path":path2, "moves": moves2, "errors": errors2, "times": times2};
           String data = json.encode(dict2);
-          createData("GMLT-5x5", "KI", data, "1.0");
+          createData("GMLT-5x5", uuid.v1().toString(), data, "1.0");
 
           showDialog(
               context: context,
@@ -250,6 +256,7 @@ class gameButtonState extends State<gameButton> {
   }
   @override
   //build actual GUI of "gamebutton" - a flatbutton with an icon hidden within it (either check or X)
+  //todo - How to create the grid based on the shortest dimension of the rectangle?  This is to avoid the error bars.
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
@@ -299,6 +306,37 @@ class mazeState extends State<maze> {
     return true;
   }
 
+  double getSmallestDimension() {
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double result;
+
+    var deviceOrientation = MediaQuery.of(context).orientation;
+
+    if (deviceOrientation == Orientation.landscape) {
+      print("orientation: landscape");
+    } else {
+      print("orientation: portrait");
+    }
+
+    // return the lesser of the two
+    // var result =  (height > width) ? width : height;
+    if (height>width) {
+      result = width;
+    } else {
+      result = height;
+    }
+
+    print("w: " + width.toString() + " h: " + height.toString() +
+          " result: " + result.toString());
+    return result;
+  }
   //initialize state + start clock2 once
   void initState()
   {
@@ -313,41 +351,44 @@ class mazeState extends State<maze> {
     return NotificationListener<PressNotification>(
       onNotification: updateButton,
       child:
-      Scaffold(
-        backgroundColor:Colors.cyan,
-        body: Column(
-            children: <Widget>[
-              GridView.builder(
-                //uniqueKey utilized so buttons that need to change color can dynamically rebuild
-                  key: UniqueKey(),
-                  itemCount: 36,
-                  //squares kept in 10x10 gridview
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 6,
-                      crossAxisSpacing: 0,
-                      mainAxisSpacing: 0
-                  ),
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return maze2.button_grid[index];
 
-                  }
-              ),
+      SizedBox(
+        width: null,
+        height: getSmallestDimension(),
+        child: Scaffold(
+          backgroundColor:Colors.cyan,
+          body: Column(
+              children: <Widget>[
+                GridView.builder(
+                  //uniqueKey utilized so buttons that need to change color can dynamically rebuild
+                    key: UniqueKey(),
+                    itemCount: 36,
+                    //squares kept in 10x10 gridview
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 6,
+                        crossAxisSpacing: 0,
+                        mainAxisSpacing: 0
+                    ),
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return maze2.button_grid[index];
 
-              Align(
-                alignment: Alignment.bottomRight,
-                child: IconButton(
-                  icon: Icon(Icons.help),
-                  onPressed:() {
-                    Navigator.push(
-                      context,
-                      new MaterialPageRoute(builder: (ctxt) => new SecondScreen()),
-                    );
-                  },
+                    }
                 ),
-              )
-
-            ]
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    icon: Icon(Icons.help),
+                    onPressed:() {
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(builder: (ctxt) => new SecondScreen()),
+                      );
+                    },
+                  ),
+                )
+              ]
+          ),
         ),
       ),
     );
@@ -363,15 +404,46 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 class _MyHomePageState extends State<MyHomePage> {
+
+  double getSmallestDimension() {
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
+
+    print("w: " + width.toString() + " h: " + height.toString());
+    // return the lesser of the two
+    // var result =  (height > width) ? width : height;
+    if (height>width) {
+    return width;
+    } else {
+    return height;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Center(child: Text("GMT")),
         ),
-        body: Center(
-          child: maze2,
-        )
+        body: ConstrainedBox(
+          // // trying to constrain the dimensions on web and desktop
+          constraints: BoxConstraints(
+            maxHeight: getSmallestDimension(),
+            maxWidth: getSmallestDimension(),
+          ),
+          child: Center(
+            child: maze2,
+          )
+      ),
     );
   }
 }
+
+//width: MediaQuery.of(context).size.width,
+//height: MediaQuery.of(context).size.height,

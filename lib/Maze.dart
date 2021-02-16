@@ -5,6 +5,9 @@ import 'PathGeneration.dart';
 import 'server.dart';
 import 'main.dart';
 import 'instructions.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = Uuid();
 
 class gameButton extends StatefulWidget {
   int id;
@@ -157,7 +160,7 @@ class gameButtonState extends State<gameButton> {
         if(widget.id==99) {
           var dict = {"path":path, "moves": moves, "errors": errors, "times": times};
           String data = json.encode(dict);
-          createData("GMLT-10x10", "KI", data, "1.0");
+          createData("GMLT-10x10", uuid.v1().toString(), data, "1.0");
           attemptNum++;
           showDialog(
               context: context,
