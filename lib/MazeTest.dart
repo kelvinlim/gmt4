@@ -14,6 +14,7 @@ var uuid = Uuid();
 
 //initialize new maze
 maze maze2= new maze();
+DateTime startTime =  DateTime.now();
 Color color1 = Colors.grey;
 int lastMove = 0; //records last CORRECT move of user
 bool lastMoveIncorrect = true; //true if user's last move was correct, false otherwise
@@ -194,9 +195,11 @@ class gameButtonState extends State<gameButton> {
         });
         //ending condition- if move is correct AND the last square on the path then game should display message congratulating them
         if(widget.id==35) {
-          var dict2 = {"path":path2, "moves": moves2, "errors": errors2, "times": times2};
+          var dict2 = {"path":path2, "moves": moves2, "errors": errors2, "times": times2,
+                        "subjectId": subjectId, "startTime": startTime.toIso8601String(),
+                        "trial": attemptNum.toString() };
           String data = json.encode(dict2);
-          createData("GMLT-5x5", uuid.v1().toString(), data, id);
+          createData("GMLT-6x6", uuid.v1().toString(), data, "1.0.0");
 
           showDialog(
               context: context,

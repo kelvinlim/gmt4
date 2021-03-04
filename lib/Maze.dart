@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'userIDD.dart';
 
 var uuid = Uuid();
+DateTime startTime = DateTime.now();
 
 class gameButton extends StatefulWidget {
   int id;
@@ -159,9 +160,11 @@ class gameButtonState extends State<gameButton> {
         });
         //ending condition- if move is correct AND the last square on the path then game should display message congratulating them
         if(widget.id==99) {
-          var dict = {"path":path, "moves": moves, "errors": errors, "times": times};
+          var dict = {"path":path, "moves": moves, "errors": errors, "times": times,
+                      "subjectID": subjectId, "startTime": startTime.toString(),
+                      "trial": attemptNum.toString() };
           String data = json.encode(dict);
-          createData("GMLT-10x10", uuid.v1().toString(), data, id + "-" + attemptNum.toString());
+          createData("GMLT-10x10", uuid.v1().toString(), data, "1.0.0");
           attemptNum++;
           showDialog(
               context: context,

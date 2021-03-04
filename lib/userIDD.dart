@@ -3,14 +3,14 @@ import 'package:uuid/uuid.dart';
 import 'startingScreen.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-String id;
+String subjectId;
+
 class SubjectIDPage extends StatefulWidget {
   @override
   SubjectIDPageState createState() => SubjectIDPageState();
 }
 
 class SubjectIDPageState extends State<SubjectIDPage> {
-  String subjectId;
 
   showAlertDialog(BuildContext context) {
     // set up the button
@@ -60,7 +60,6 @@ class SubjectIDPageState extends State<SubjectIDPage> {
                   hintText: 'Enter Subject ID'),
               onChanged: (value) {
                 subjectId = value;
-                id=value;
               },
             ),
             height: MediaQuery.of(context).size.width * 0.25,
