@@ -9,6 +9,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'server.dart';
 import 'startingScreen.dart';
 import 'Maze.dart';
+import 'userIDD.dart';
+
 //initialize new maze
 maze maze1= new maze();
 Color color1 = Colors.grey;
@@ -43,6 +45,6 @@ void main() {
           backgroundColor: Colors.cyan,
         ),
         backgroundColor: Colors.blue,
-        body: startingScreen(),
+        body: SubjectIDPage(),
       )));
 }

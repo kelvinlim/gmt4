@@ -8,7 +8,7 @@ class SecondScreen extends StatelessWidget {
   Widget build (BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Instructions"),
+        title: new Text ("Instructions"),
       ),
       body: SingleChildScrollView(
         child: Center(

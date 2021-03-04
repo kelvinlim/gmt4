@@ -8,6 +8,7 @@ import 'main.dart';
 import 'server.dart';
 import 'instructions.dart';
 import 'package:uuid/uuid.dart';
+import 'userIDD.dart';
 
 var uuid = Uuid();
 
@@ -195,7 +196,7 @@ class gameButtonState extends State<gameButton> {
         if(widget.id==35) {
           var dict2 = {"path":path2, "moves": moves2, "errors": errors2, "times": times2};
           String data = json.encode(dict2);
-          createData("GMLT-5x5", uuid.v1().toString(), data, "1.0");
+          createData("GMLT-5x5", uuid.v1().toString(), data, id);
 
           showDialog(
               context: context,
