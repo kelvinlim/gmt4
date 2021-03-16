@@ -24,7 +24,8 @@ Set <int> correctMoves = {};
 List<dynamic> times=[];
 List errors = [];
 //temporary test path - going to change to make dynamically generated
-List<dynamic> path=[0,10,20,30,40,50,60,70,80,90,91,92,93,94,95,96,97,98,99];
+//List<dynamic> path=[0,10,20,30,40,50,60,70,80,90,91,92,93,94,95,96,97,98,99];
+List<dynamic> path= genPath(mat);
 bool timeOut = false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
 var dateTime = DateTime.now();
 int attemptNum = 1;
@@ -33,10 +34,15 @@ int recentMove; //records last move of user regardless of corectness
 
 void main() {
   //manually fill in maze
-  for(var i=0; i<19; i++)
-  {
-    maze1.button_grid[path[i]].onPath=1;
+  //for(var i=0; i<19; i++)
+  //{
+    //maze1.button_grid[path[i]].onPath=1;
+  //}
+
+  for(int j=0; j<27; j++) {
+    (maze1.button_grid[path[j]]).onPath=1;
   }
+
 
   return runApp(MaterialApp(
       home: Scaffold(

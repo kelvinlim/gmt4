@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 import 'Maze.dart';
 import 'MazeTest.dart';
-
+import 'detection.dart';
 
 class startingScreen extends StatefulWidget {
   @override
@@ -79,6 +79,34 @@ class startingScreenState extends State<startingScreen> {
                     ),
                     Container(
                       child: new Text("GMT-6x6", style:new TextStyle(color:Colors.white)),
+                    )
+
+                  ],
+                ),
+
+
+                Column(
+                  children: <Widget>[
+                    Container(
+                      margin:EdgeInsets.symmetric(horizontal:45.0,vertical: 10.0),
+                      child: SizedBox(
+                          width:55.0,
+                          height:55.0,
+                          child: new FlatButton(
+                              color: Colors.blue,
+                              padding: EdgeInsets.all(0.0),
+                              child: Image.asset("assets/cardBack.PNG", fit:BoxFit.fill),
+                              onPressed:() {
+                                Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(builder: (context) => detectionTaskPage()),
+                                );
+                              }
+                          )
+                      ),
+                    ),
+                    Container(
+                      child: new Text("DetectionTask", style:new TextStyle(color:Colors.white)),
                     )
 
                   ],
