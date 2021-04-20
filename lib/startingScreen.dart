@@ -85,7 +85,7 @@ class startingScreenState extends State<startingScreen> {
                 ),
 
 
-                Column(
+                /*Column(
                   children: <Widget>[
                     Container(
                       margin:EdgeInsets.symmetric(horizontal:45.0,vertical: 10.0),
@@ -111,6 +111,7 @@ class startingScreenState extends State<startingScreen> {
 
                   ],
                 ),
+                */
 
               ],
             )
