@@ -86,6 +86,7 @@ class startingScreenState extends State<startingScreen> {
                   ],
                 ),
 
+
                 /*Column(
                   children: <Widget>[
                     Container(
