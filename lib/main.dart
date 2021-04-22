@@ -34,10 +34,10 @@ int recentMove; //records last move of user regardless of corectness
 
 void main() {
   //manually fill in maze
-  //for(var i=0; i<19; i++)
-  //{
-    //maze1.button_grid[path[i]].onPath=1;
-  //}
+  /*for(var i=0; i<19; i++)
+  {
+    maze1.button_grid[path[i]].onPath=1;
+  }*/
 
   for(int j=0; j<27; j++) {
     (maze1.button_grid[path[j]]).onPath=1;

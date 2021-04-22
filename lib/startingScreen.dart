@@ -1,10 +1,11 @@
+
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'Maze.dart';
 import 'MazeTest.dart';
-import 'detection.dart';
+//import 'detection.dart';
 
 class startingScreen extends StatefulWidget {
   @override
@@ -31,31 +32,6 @@ class startingScreenState extends State<startingScreen> {
             ),
             Row(
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      margin:EdgeInsets.all(10.0),
-                      child: SizedBox(
-                          width:55.0,
-                          height:55.0,
-                          child: new RaisedButton(
-                              padding: EdgeInsets.all(0.0),
-                              child: Image.asset("assets/mazeimage2.PNG", fit:BoxFit.fill),
-                              onPressed:() {
-                                Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(builder: (context) => maze1),
-                                );
-                              }
-                          )
-                      ),
-                    ),
-                    Container(
-                      child: new Text("GMT-10x10", style:new TextStyle(color:Colors.white)),
-                    )
-
-                  ],
-                ),
 
                 Column(
                   children: <Widget>[
@@ -84,8 +60,33 @@ class startingScreenState extends State<startingScreen> {
                   ],
                 ),
 
-
                 Column(
+                  children: <Widget>[
+                    Container(
+                      margin:EdgeInsets.all(10.0),
+                      child: SizedBox(
+                          width:55.0,
+                          height:55.0,
+                          child: new RaisedButton(
+                              padding: EdgeInsets.all(0.0),
+                              child: Image.asset("assets/mazeimage2.PNG", fit:BoxFit.fill),
+                              onPressed:() {
+                                Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(builder: (context) => maze1),
+                                );
+                              }
+                          )
+                      ),
+                    ),
+                    Container(
+                      child: new Text("GMT-10x10", style:new TextStyle(color:Colors.white)),
+                    )
+
+                  ],
+                ),
+
+                /*Column(
                   children: <Widget>[
                     Container(
                       margin:EdgeInsets.symmetric(horizontal:45.0,vertical: 10.0),
@@ -108,9 +109,9 @@ class startingScreenState extends State<startingScreen> {
                     Container(
                       child: new Text("DetectionTask", style:new TextStyle(color:Colors.white)),
                     )
-
                   ],
                 ),
+                */
 
               ],
             )

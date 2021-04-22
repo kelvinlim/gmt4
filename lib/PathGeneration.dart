@@ -6,6 +6,7 @@ import 'main.dart';
 
 void fillMaze() {
 
+  mat= [for(var i=0; i<100;i++) i];
   path= genPath(mat);
   //clear board
   for (int i = 0; i < 100; i++) {
@@ -106,8 +107,10 @@ List genPath(List mat) {
   return path;
 }
 
-
 List<int>mat= [for(var i=0; i<100;i++) i];
+
+
+
 
 
 

@@ -120,8 +120,8 @@ class gameButtonState extends State<gameButton> {
 
   void newMaze()
   {
-    fillMaze();
     resetGame();
+    fillMaze();
   }
 
   //function executed when any button pressed
