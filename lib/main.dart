@@ -10,6 +10,9 @@ import 'server.dart';
 import 'startingScreen.dart';
 import 'Maze.dart';
 import 'userIDD.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 //initialize new maze
 maze maze1= new maze();
@@ -31,8 +34,11 @@ var dateTime = DateTime.now();
 int attemptNum = 1;
 int consecErrors = 0;
 int recentMove; //records last move of user regardless of corectness
+final  AudioCache audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
 
 void main() {
+
+
   //manually fill in maze
   /*for(var i=0; i<19; i++)
   {
@@ -42,6 +48,9 @@ void main() {
   for(int j=0; j<27; j++) {
     (maze1.button_grid[path[j]]).onPath=1;
   }
+
+
+
 
 
   return runApp(MaterialApp(

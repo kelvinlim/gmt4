@@ -7,6 +7,8 @@ import 'main.dart';
 import 'instructions.dart';
 import 'package:uuid/uuid.dart';
 import 'userIDD.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 var uuid = Uuid();
 DateTime startTime = DateTime.now();
@@ -140,6 +142,7 @@ class gameButtonState extends State<gameButton> {
         errors.add("correct");
         maze1.button_grid[widget.id].color = Colors.green;
         maze1.button_grid[widget.id].displayImage = true;
+        audioCache.play('ding2.mp3');
         icon = Icons.check;
         Timer(Duration(milliseconds: 75), () {
           if (this.mounted) {
@@ -202,6 +205,7 @@ class gameButtonState extends State<gameButton> {
         //keep track of how many consecutive errors user has made- if 3 then game should show next correct move
         consecErrors++;
         errors.add("incorrect");
+        audioCache.play('buzz2.mp3');
         maze1.button_grid[widget.id].color = Colors.red;
         maze1.button_grid[widget.id].displayImage=true;
         icon = Icons.clear;

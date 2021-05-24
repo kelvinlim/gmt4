@@ -173,6 +173,7 @@ class gameButtonState extends State<gameButton> {
       if(widget.moveCheck()) {
         consecErrors2 = 0;
         maze2.button_grid[widget.id].color = Colors.green;
+        audioCache.play('ding2.mp3');
         errors2.add("correct");
         maze2.button_grid[widget.id].displayImage = true;
         icon = Icons.check;
@@ -239,6 +240,7 @@ class gameButtonState extends State<gameButton> {
         //keep track of how many consecutive errors user has made- if 3 then game should show next correct move
         consecErrors2++;
         maze2.button_grid[widget.id].color = Colors.red;
+        audioCache.play('buzz2.mp3');
         errors2.add("incorrect");
         maze2.button_grid[widget.id].displayImage=true;
         icon = Icons.clear;
