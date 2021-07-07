@@ -9,6 +9,7 @@ import 'server.dart';
 import 'instructions.dart';
 import 'package:uuid/uuid.dart';
 import 'userIDD.dart';
+import 'package:just_audio/just_audio.dart';
 
 var uuid = Uuid();
 
@@ -28,7 +29,7 @@ List<dynamic> path2=[0,1,2,8,14,13,19,20,21,22,28,29,35];
 bool timeOut2 = false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
 int attemptNum2 = 1;
 int consecErrors2 = 0;
-int recentMove2; //records last move of user regardless of corectness
+int recentMove2=0; //records last move of user regardless of corectness
 
 
 void main() {
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page', key: null,),
     );
   }
 }
@@ -117,6 +118,15 @@ class gameButton extends StatefulWidget {
 
 class gameButtonState extends State<gameButton> {
 
+  //initialize audioplayer
+  AudioPlayer player2;
+  @override
+  void initState() {
+    super.initState();
+    player2 = AudioPlayer();
+  }
+// stop initializing audioplayer
+
   Color color;
 
   //initialize color state of buttons
@@ -173,7 +183,8 @@ class gameButtonState extends State<gameButton> {
       if(widget.moveCheck()) {
         consecErrors2 = 0;
         maze2.button_grid[widget.id].color = Colors.green;
-        audioCache.play('ding2.mp3');
+        player2.setAsset('assets/audio/ding2.mp3');
+        player2.play();
         errors2.add("correct");
         maze2.button_grid[widget.id].displayImage = true;
         icon = Icons.check;
@@ -201,6 +212,7 @@ class gameButtonState extends State<gameButton> {
                         "trial": attemptNum.toString() };
           String data = json.encode(dict2);
           createData("GMLT-6x6", uuid.v1().toString(), data, "1.0.0");
+          player2.dispose();
 
           showDialog(
               context: context,
@@ -209,7 +221,7 @@ class gameButtonState extends State<gameButton> {
                 return AlertDialog(
                     title: new Text("Success!"),
                     actions: <Widget>[
-                      new FlatButton(
+                      new TextButton(
                           onPressed: () {
                             resetGame();
                             Navigator.pop(context);
@@ -217,7 +229,7 @@ class gameButtonState extends State<gameButton> {
                           child: new Text("Practice Again")
                       ),
 
-                      new FlatButton(
+                      new TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -240,7 +252,8 @@ class gameButtonState extends State<gameButton> {
         //keep track of how many consecutive errors user has made- if 3 then game should show next correct move
         consecErrors2++;
         maze2.button_grid[widget.id].color = Colors.red;
-        audioCache.play('buzz2.mp3');
+        player2.setAsset('assets/audio/buzz2.mp3');
+        player2.play();
         errors2.add("incorrect");
         maze2.button_grid[widget.id].displayImage=true;
         icon = Icons.clear;
@@ -266,16 +279,17 @@ class gameButtonState extends State<gameButton> {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        child: FlatButton(
-            color: maze2.button_grid[widget.id].color,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: maze2.button_grid[widget.id].color,
+            ),
             onPressed: () {
               //what happens on buttonPress event- either nothing (if animation is taking place) or buttonPress function (defined above) called
               timeOut2?null:buttonPress();
             },
             child: maze2.button_grid[widget.id].displayImage?Column(// Replace with a Row for horizontal icon + text
               children: <Widget>[
-                maze2.button_grid[widget.id].displayImage?Icon(icon):null,
+                maze2.button_grid[widget.id].displayImage?Icon(icon, color:Colors.black):null,
               ],
             ):null
         ));
@@ -365,21 +379,23 @@ class mazeState extends State<maze> {
           backgroundColor:Colors.cyan,
           body: Column(
               children: <Widget>[
-                GridView.builder(
-                  //uniqueKey utilized so buttons that need to change color can dynamically rebuild
-                    key: UniqueKey(),
-                    itemCount: 36,
-                    //squares kept in 10x10 gridview
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 6,
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 0
-                    ),
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return maze2.button_grid[index];
+                Expanded(
+                  child: GridView.builder(
+                    //uniqueKey utilized so buttons that need to change color can dynamically rebuild
+                      key: UniqueKey(),
+                      itemCount: 36,
+                      //squares kept in 10x10 gridview
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 6,
+                          crossAxisSpacing: 0,
+                          mainAxisSpacing: 0
+                      ),
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        return maze2.button_grid[index];
 
-                    }
+                      }
+                  ),
                 ),
                 Align(
                   alignment: Alignment.bottomRight,

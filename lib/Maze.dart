@@ -7,8 +7,8 @@ import 'main.dart';
 import 'instructions.dart';
 import 'package:uuid/uuid.dart';
 import 'userIDD.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
+
 
 var uuid = Uuid();
 DateTime startTime = DateTime.now();
@@ -76,6 +76,16 @@ class gameButton extends StatefulWidget {
 
 class gameButtonState extends State<gameButton> {
 
+  //initialize audioplayer
+  AudioPlayer player;
+  @override
+  void initState() {
+    super.initState();
+    player = AudioPlayer();
+  }
+// stop initializing audioplayer
+
+
   Color color;
 
   //initialize color state of buttons
@@ -115,7 +125,7 @@ class gameButtonState extends State<gameButton> {
     times=[];
     errors = [];
     consecErrors = 0;
-    lastMove = 0; //records last CORRECT move of user
+    lastMove = 0; //records last COR user
     lastMoveIncorrect = true;
     clock.reset();
   }
@@ -142,8 +152,9 @@ class gameButtonState extends State<gameButton> {
         errors.add("correct");
         maze1.button_grid[widget.id].color = Colors.green;
         maze1.button_grid[widget.id].displayImage = true;
-        audioCache.play('ding2.mp3');
-        icon = Icons.check;
+        player.setAsset('assets/audio/ding2.mp3');
+        player.play();
+        icon= Icons.check;
         Timer(Duration(milliseconds: 75), () {
           if (this.mounted) {
             setState(() {
@@ -168,6 +179,7 @@ class gameButtonState extends State<gameButton> {
                       "trial": attemptNum.toString() };
           String data = json.encode(dict);
           createData("GMLT-10x10", uuid.v1().toString(), data, "1.0.0");
+          player.dispose();
           attemptNum++;
           showDialog(
               context: context,
@@ -176,7 +188,7 @@ class gameButtonState extends State<gameButton> {
                 return AlertDialog(
                     title: new Text("Success!"),
                     actions: <Widget>[
-                      new FlatButton(
+                      new TextButton(
                           onPressed: () {
                             resetGame();
                             Navigator.pop(context);
@@ -184,7 +196,7 @@ class gameButtonState extends State<gameButton> {
                           child: new Text("Same Maze")
                       ),
 
-                      new FlatButton(
+                      new TextButton(
                           onPressed: () {
                             newMaze();
                             Navigator.pop(context);
@@ -205,9 +217,12 @@ class gameButtonState extends State<gameButton> {
         //keep track of how many consecutive errors user has made- if 3 then game should show next correct move
         consecErrors++;
         errors.add("incorrect");
-        audioCache.play('buzz2.mp3');
+
+
         maze1.button_grid[widget.id].color = Colors.red;
         maze1.button_grid[widget.id].displayImage=true;
+        player.setAsset('assets/audio/buzz2.mp3');
+        player.play();
         icon = Icons.clear;
         Timer(Duration(milliseconds: 75), () {
           if(this.mounted) {
@@ -230,16 +245,17 @@ class gameButtonState extends State<gameButton> {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        child: FlatButton(
-            color: maze1.button_grid[widget.id].color,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: maze1.button_grid[widget.id].color,
+            ),
             onPressed: () {
               //what happens on buttonPress event- either nothing (if animation is taking place) or buttonPress function (defined above) called
               timeOut?null:buttonPress();
             },
             child: maze1.button_grid[widget.id].displayImage?Column(// Replace with a Row for horizontal icon + text
               children: <Widget>[
-                maze1.button_grid[widget.id].displayImage?Icon(icon):null,
+                Expanded(child: maze1.button_grid[widget.id].displayImage?Icon(icon, color:Colors.black):null),
               ],
             ):null
         ));
@@ -286,29 +302,31 @@ class mazeState extends State<maze> {
   @override
   //build and return concrete implemenation of maze class
   Widget build(BuildContext context) {
+    //get size of screen
     //wrapped in notification listener so each square can listen for color change event
     return NotificationListener<PressNotification>(
       onNotification: updateButton,
-      child:
-      Scaffold(
+      child: Scaffold(
         backgroundColor: Colors.cyan,
         body: Column(
             children: <Widget>[
-              GridView.builder(
-                //uniqueKey utilized so buttons that need to change color can dynamically rebuild
-                  key: UniqueKey(),
-                  itemCount: 100,
-                  //squares kept in 10x10 gridview
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 10,
-                      crossAxisSpacing: 0,
-                      mainAxisSpacing: 0
-                  ),
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return maze1.button_grid[index];
+              Expanded(
+                child: GridView.builder(
+                  //uniqueKey utilized so buttons that need to change color can dynamically rebuild
+                    key: UniqueKey(),
+                    itemCount: 100,
+                    //squares kept in 10x10 gridview
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 10,
+                        crossAxisSpacing: 0,
+                        mainAxisSpacing: 0
+                    ),
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return maze1.button_grid[index];
 
-                  }
+                    }
+                ),
               ),
               Align(
                 alignment: Alignment.bottomRight,

@@ -40,9 +40,11 @@ class startingScreenState extends State<startingScreen> {
                       child: SizedBox(
                           width:55.0,
                           height:55.0,
-                          child: new FlatButton(
-                              color: Colors.blue,
-                              padding: EdgeInsets.all(0.0),
+                          child: new TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                padding: EdgeInsets.all(0.0),
+                              ),
                               child: Image.asset("assets/mazeimage2.PNG", fit:BoxFit.fill),
                               onPressed:() {
                                 Navigator.push(
@@ -67,8 +69,11 @@ class startingScreenState extends State<startingScreen> {
                       child: SizedBox(
                           width:55.0,
                           height:55.0,
-                          child: new RaisedButton(
+                          child: new TextButton(
+                              style: TextButton.styleFrom(
                               padding: EdgeInsets.all(0.0),
+                              ),
+
                               child: Image.asset("assets/mazeimage2.PNG", fit:BoxFit.fill),
                               onPressed:() {
                                 Navigator.push(

@@ -11,8 +11,8 @@ import 'startingScreen.dart';
 import 'Maze.dart';
 import 'userIDD.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+
+import 'package:just_audio/just_audio.dart';
 
 //initialize new maze
 maze maze1= new maze();
@@ -33,8 +33,9 @@ bool timeOut = false; //when true, user is prohibited from entering new moves (s
 var dateTime = DateTime.now();
 int attemptNum = 1;
 int consecErrors = 0;
-int recentMove; //records last move of user regardless of corectness
-final  AudioCache audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
+int recentMove=0; //records last move of user regardless of corectness
+//final  AudioCache audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
+
 
 void main() {
 
