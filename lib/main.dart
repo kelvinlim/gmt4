@@ -11,48 +11,47 @@ import 'startingScreen.dart';
 import 'Maze.dart';
 import 'userIDD.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'url_args.dart';
 
 import 'package:just_audio/just_audio.dart';
 
 //initialize new maze
-maze maze1= new maze();
+maze maze1 = new maze();
 Color color1 = Colors.grey;
 int lastMove = 0; //records last CORRECT move of user
-bool lastMoveIncorrect = true; //true if user's last move was correct, false otherwise
+bool lastMoveIncorrect =
+    true; //true if user's last move was correct, false otherwise
 var icon = Icons.check;
-var image="assets/greencheck.jpg";
-Stopwatch clock = new Stopwatch(); //initialize new stopwatch that will be used to record times of user's moves
+var image = "assets/greencheck.jpg";
+Stopwatch clock =
+    new Stopwatch(); //initialize new stopwatch that will be used to record times of user's moves
 List moves = [];
-Set <int> correctMoves = {};
-List<dynamic> times=[];
+Set<int> correctMoves = {};
+List<dynamic> times = [];
 List errors = [];
 //temporary test path - going to change to make dynamically generated
 //List<dynamic> path=[0,10,20,30,40,50,60,70,80,90,91,92,93,94,95,96,97,98,99];
-List<dynamic> path= genPath(mat);
-bool timeOut = false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
+List<dynamic> path = genPath(mat);
+bool timeOut =
+    false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
 var dateTime = DateTime.now();
 int attemptNum = 1;
 int consecErrors = 0;
-int recentMove=0; //records last move of user regardless of corectness
+int recentMove = 0; //records last move of user regardless of corectness
 //final  AudioCache audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
-
+String subjectID = 'urlTest'; //subject ID that is in url
+Map<String, String> urlArgs = {};
 
 void main() {
-
-
   //manually fill in maze
   /*for(var i=0; i<19; i++)
   {
     maze1.button_grid[path[i]].onPath=1;
   }*/
 
-  for(int j=0; j<27; j++) {
-    (maze1.button_grid[path[j]]).onPath=1;
+  for (int j = 0; j < 27; j++) {
+    (maze1.button_grid[path[j]]).onPath = 1;
   }
-
-
-
-
 
   return runApp(MaterialApp(
       home: Scaffold(
@@ -61,6 +60,29 @@ void main() {
           backgroundColor: Colors.cyan,
         ),
         backgroundColor: Colors.blue,
-        body: SubjectIDPage(),
-      )));
+        body: startingScreen(),
+      ),
+      onGenerateRoute: (settings) {
+        print("settings.name " + settings.name);
+
+        urlArgs = getURLArgs(settings.name);
+        urlArgs.forEach((key, value) => print('${key}: ${value}'));
+
+        if (urlArgs.containsKey('id')) {
+          subjectID = urlArgs['id'];
+        }
+
+        // check for /?id=1234&time=2.0
+        switch (settings.name[1]) {
+          case '?':
+            return MaterialPageRoute(
+              builder: (context) => startingScreen(),
+            );
+            break;
+          default:
+            return MaterialPageRoute(
+              builder: (context) => startingScreen(),
+            );
+        }
+      }));
 }
