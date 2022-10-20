@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'startingScreen.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-String subjectId;
+late String subjectId;
 
 class SubjectIDPage extends StatefulWidget {
   @override
@@ -11,7 +11,6 @@ class SubjectIDPage extends StatefulWidget {
 }
 
 class SubjectIDPageState extends State<SubjectIDPage> {
-
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = ElevatedButton(
@@ -82,8 +81,7 @@ class SubjectIDPageState extends State<SubjectIDPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => startingScreen(
-                          ),
+                          builder: (context) => startingScreen(),
                         ),
                       );
                     }

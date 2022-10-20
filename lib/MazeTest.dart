@@ -5,39 +5,65 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'main.dart';
-import 'server.dart';
+//import 'server.dart';
 import 'instructions.dart';
 import 'package:uuid/uuid.dart';
 import 'userIDD.dart';
-import 'package:just_audio/just_audio.dart';
+//import 'package:just_audio/just_audio.dart';
+import 'api_helpers.dart';
+import './taskflow/lib/api.dart';
 
 var uuid = Uuid();
 
+TaskFlowClient _client = new TaskFlowClient();
+
+void saveTask(dataMap) async {
+  int sessionID = _client.getSessionId();
+  int measureID = _client.getMeasureId();
+  int populationID = _client.getPopulationId();
+
+  Measure? measure = await _client.fetchMeasureAsync(sessionID, measureID);
+  Session? session = await _client.fetchSessionAsync(populationID, sessionID);
+
+  if (measure != null) {
+    measure.json = jsonEncode(dataMap);
+
+    _client.saveMeasureAsync(sessionID, measureID, measure);
+  }
+
+  if (session != null) {
+    session.complete = true;
+
+    _client.saveSessionAsync(populationID, session);
+  }
+}
+
 //initialize new maze
-maze maze2= new maze();
-DateTime startTime =  DateTime.now();
+maze maze2 = new maze();
+DateTime startTime = DateTime.now();
 Color color1 = Colors.grey;
 int lastMove = 0; //records last CORRECT move of user
-bool lastMoveIncorrect = true; //true if user's last move was correct, false otherwise
-Stopwatch clock2 = new Stopwatch(); //initialize new stopwatch that will be used to record times of user's moves
+bool lastMoveIncorrect =
+    true; //true if user's last move was correct, false otherwise
+Stopwatch clock2 =
+    new Stopwatch(); //initialize new stopwatch that will be used to record times of user's moves
 List moves2 = [];
 List errors2 = [];
 List times2 = [];
-Set <int> correctMoves2 = {};
+Set<int> correctMoves2 = {};
 //temporary test path - going to change to make dynamically generated
-List<dynamic> path2=[0,1,2,8,14,13,19,20,21,22,28,29,35];
-bool timeOut2 = false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
+List<dynamic> path2 = [0, 1, 2, 8, 14, 13, 19, 20, 21, 22, 28, 29, 35];
+bool timeOut2 =
+    false; //when true, user is prohibited from entering new moves (so as not to overwhelm game)
 int attemptNum2 = 1;
 int consecErrors2 = 0;
-int recentMove2=0; //records last move of user regardless of corectness
-
+int recentMove2 = 0; //records last move of user regardless of correctness
 
 void main() {
   runApp(MyApp());
   //manually fill in maze
-  for(var i=0; i<13; i++)
-  {
-    maze2.button_grid[path2[i]].onPath=1;
+  for (var i = 0; i < 13; i++) {
+    maze2.button_grid[path2[i]].onPath = 1;
   }
 }
 
@@ -50,7 +76,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page', key: null,),
+      home: MyHomePage(
+        title: 'Flutter Demo Home Page',
+      ),
     );
   }
 }
@@ -60,70 +88,56 @@ class gameButton extends StatefulWidget {
   //id represents id of button (top left button is 0 bottom right button is 99)
   Color color;
   bool displayImage;
-  int onPath=0;
+  int onPath = 0;
   //1 if square is on the path, 0 otherwise
   bool testOnPath() {
-    if(this.onPath==1)
-    {
+    if (this.onPath == 1) {
       return true;
-
-    }
-    else
-    {
+    } else {
       return false;
     }
   }
 
-  bool testIfLegal(lastMove)
-  {
+  bool testIfLegal(lastMove) {
     return (((this.id - lastMove).abs() == 1) ^
-    ((this.id - lastMove).abs() == 6));
+        ((this.id - lastMove).abs() == 6));
   }
+
   //tests if move is legal
-  bool moveCheck()
-  {
-    if(lastMoveIncorrect)
-    {
-      if(this.id == lastMove)
-      {
+  bool moveCheck() {
+    if (lastMoveIncorrect) {
+      if (this.id == lastMove) {
         lastMoveIncorrect = false;
         return true;
-      }
-      else
-      {
+      } else {
         return false;
       }
-    }
-    else
-    {
-      if(this.testIfLegal(lastMove) & (this.id==path2[correctMoves2.length]))
-      {
+    } else {
+      if (this.testIfLegal(lastMove) &
+          (this.id == path2[correctMoves2.length])) {
         lastMove = this.id;
         return true;
-      }
-      else
-      {
-        lastMoveIncorrect=true;
+      } else {
+        lastMoveIncorrect = true;
         return false;
       }
     }
   }
+
   //function above returns true if move user makes is correct (both a legal move and a square that is on the path) and false otherwise
   @override
   gameButton(this.id, this.color, this.displayImage);
   //initialize state
   gameButtonState createState() => gameButtonState(color);
-
 }
 
 class gameButtonState extends State<gameButton> {
-
   //initialize audioplayer
-  AudioPlayer player2;
+  //late AudioPlayer player2;
   @override
   void initState() {
     super.initState();
-    player2 = AudioPlayer();
+    //player2 = AudioPlayer();
   }
 // stop initializing audioplayer
 
@@ -137,9 +151,7 @@ class gameButtonState extends State<gameButton> {
     if (moves2.length >= 2) {
       if (widget.id == moves2[moves2.length - 2]) {
         null;
-      }
-
-      else {
+      } else {
         PressNotification(id: (moves2[moves2.length - 2]), color: Colors.grey)
             .dispatch(context);
       }
@@ -151,15 +163,13 @@ class gameButtonState extends State<gameButton> {
     if (consecErrors2 >= 3) {
       timeOut2 = true;
       PressNotification(id: lastMove, color: Colors.green).dispatch(context);
-    }
-
-    else {
+    } else {
       null;
     }
   }
+
 //once user reaches end of maze, game should be reset
-  void resetGame()
-  {
+  void resetGame() {
     //reinitialize variables to default
     moves2 = [];
     correctMoves2 = {};
@@ -169,34 +179,29 @@ class gameButtonState extends State<gameButton> {
     clock2.reset();
   }
 
-
   //function executed when any button pressed
-  void buttonPress()
-  {
+  void buttonPress() {
     moves2.add(widget.id);
     times2.add(clock2.elapsedMilliseconds);
-    //first prevent uesr from making new moves during 250 milisecond animation
+    //first prevent user from making new moves during 250 millisecond animation
     timeOut2 = true;
     clock2.reset();
     setState(() {
-      //check if move is "correct"- if so square should turn green and display checkmark for 100 miliseconds
-      if(widget.moveCheck()) {
+      //check if move is "correct"- if so square should turn green and display checkmark for 100 milliseconds
+      if (widget.moveCheck()) {
         consecErrors2 = 0;
         maze2.button_grid[widget.id].color = Colors.green;
-        player2.setAsset('assets/audio/ding2.mp3');
-        player2.play();
+        //player2.setAsset('assets/audio/ding2.mp3');
+        //player2.play();
         errors2.add("correct");
         maze2.button_grid[widget.id].displayImage = true;
         icon = Icons.check;
         Timer(Duration(milliseconds: 75), () {
           if (this.mounted) {
             setState(() {
-              if(widget.id==35)
-              {
+              if (widget.id == 35) {
                 maze2.button_grid[widget.id].color = Colors.grey;
-              }
-              else
-              {
+              } else {
                 maze2.button_grid[widget.id].color = Colors.purple;
               }
               turnGrey();
@@ -206,13 +211,21 @@ class gameButtonState extends State<gameButton> {
           }
         });
         //ending condition- if move is correct AND the last square on the path then game should display message congratulating them
-        if(widget.id==35) {
-          var dict2 = {"path":path2, "moves": moves2, "errors": errors2, "times": times2,
-                        "subjectId": subjectId, "startTime": startTime.toIso8601String(),
-                        "trial": attemptNum.toString() };
-          String data = json.encode(dict2);
-          createData("GMLT-6x6", uuid.v1().toString(), data, "1.0.0");
-          player2.dispose();
+        if (widget.id == 35) {
+          var dict2 = {
+            "path": path2,
+            "moves": moves2,
+            "errors": errors2,
+            "times": times2,
+            "subjectId": subjectId,
+            "startTime": startTime.toIso8601String(),
+            "trial": attemptNum.toString()
+          };
+          //String data = json.encode(dict2);
+          //createData("GMLT-6x6", uuid.v1().toString(), data, "1.0.0");
+          //saveTask(data);
+          //not going to save practice data now
+          //player2.dispose();
 
           showDialog(
               context: context,
@@ -226,73 +239,71 @@ class gameButtonState extends State<gameButton> {
                             resetGame();
                             Navigator.pop(context);
                           },
-                          child: new Text("Practice Again")
-                      ),
-
+                          child: new Text("Practice Again")),
                       new TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              new MaterialPageRoute(builder: (context) => maze1),
+                              new MaterialPageRoute(
+                                  builder: (context) => maze1),
                             );
                           },
-                          child: new Text("Start Task")
-                      )
-
-                    ]
-                );
-              }
-          );
-
+                          child: new Text("Start Task"))
+                    ]);
+              });
         }
         correctMoves2.add(widget.id);
-      }
-      else //this code runs if move is INCORRECT- if move is incorrect then square turns red and displays an X
-          {
+      } else //this code runs if move is INCORRECT- if move is incorrect then square turns red and displays an X
+      {
         //keep track of how many consecutive errors user has made- if 3 then game should show next correct move
         consecErrors2++;
         maze2.button_grid[widget.id].color = Colors.red;
-        player2.setAsset('assets/audio/buzz2.mp3');
-        player2.play();
+        //player2.setAsset('assets/audio/buzz2.mp3');
+        //player2.play();
         errors2.add("incorrect");
-        maze2.button_grid[widget.id].displayImage=true;
+        maze2.button_grid[widget.id].displayImage = true;
         icon = Icons.clear;
         Timer(Duration(milliseconds: 75), () {
-          if(this.mounted) {
+          if (this.mounted) {
             setState(() {
               maze2.button_grid[widget.id].color = Colors.purple;
               turnGrey();
-              maze2.button_grid[widget.id].displayImage=false;
+              maze2.button_grid[widget.id].displayImage = false;
               mercyRule();
-              timeOut2=false;
+              timeOut2 = false;
             });
           }
         });
       }
-
     });
-    recentMove2=widget.id;
+    recentMove2 = widget.id;
   }
+
   @override
   //build actual GUI of "gamebutton" - a flatbutton with an icon hidden within it (either check or X)
   //todo - How to create the grid based on the shortest dimension of the rectangle?  This is to avoid the error bars.
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        child: TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: maze2.button_grid[widget.id].color,
-            ),
-            onPressed: () {
-              //what happens on buttonPress event- either nothing (if animation is taking place) or buttonPress function (defined above) called
-              timeOut2?null:buttonPress();
-            },
-            child: maze2.button_grid[widget.id].displayImage?Column(// Replace with a Row for horizontal icon + text
-              children: <Widget>[
-                maze2.button_grid[widget.id].displayImage?Icon(icon, color:Colors.black):null,
-              ],
-            ):null
-        ));
+      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: maze2.button_grid[widget.id].color,
+        ),
+        onPressed: () {
+          //what happens on buttonPress event- either nothing (if animation is taking place) or buttonPress function (defined above) called
+          timeOut2 ? null : buttonPress();
+        },
+        child: Column(
+          // Replace with a Row for horizontal icon + text
+          children: <Widget>[
+            if (maze2.button_grid[widget.id].displayImage == true)
+              Icon(icon, color: Colors.black)
+            else
+              Icon(icon, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -301,18 +312,19 @@ class PressNotification extends Notification {
   final int id;
   final Color color;
 
-  const PressNotification({this.id, this.color});
+  const PressNotification({required this.id, required this.color});
 }
+
 //maze is the collection of all 100 buttons- initialized here
 class maze extends StatefulWidget {
-  List<gameButton> button_grid  = [
+  List<gameButton> button_grid = [
     for (var i = 0; i < 36; i++) new gameButton(i, Colors.grey, false)
   ];
 
   @override
   mazeState createState() => mazeState(button_grid);
-
 }
+
 //state of maze
 class mazeState extends State<maze> {
   List<gameButton> button_grid;
@@ -327,14 +339,8 @@ class mazeState extends State<maze> {
   }
 
   double getSmallestDimension() {
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    double height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     double result;
 
     var deviceOrientation = MediaQuery.of(context).orientation;
@@ -347,113 +353,106 @@ class mazeState extends State<maze> {
 
     // return the lesser of the two
     // var result =  (height > width) ? width : height;
-    if (height>width) {
+    if (height > width) {
       result = width;
     } else {
       result = height;
     }
 
-    print("w: " + width.toString() + " h: " + height.toString() +
-          " result: " + result.toString());
+    print("w: " +
+        width.toString() +
+        " h: " +
+        height.toString() +
+        " result: " +
+        result.toString());
     return result;
   }
+
   //initialize state + start clock2 once
-  void initState()
-  {
+  void initState() {
     super.initState();
     clock2.start();
   }
 
   @override
-  //build and return concrete implemenation of maze class
+  //build and return concrete implementation of maze class
   Widget build(BuildContext context) {
     //wrapped in notification listener so each square can listen for color change event
     return NotificationListener<PressNotification>(
       onNotification: updateButton,
-      child:
-
-      SizedBox(
+      child: SizedBox(
         width: null,
         height: getSmallestDimension(),
         child: Scaffold(
-          backgroundColor:Colors.cyan,
-          body: Column(
-              children: <Widget>[
-                Expanded(
-                  child: GridView.builder(
-                    //uniqueKey utilized so buttons that need to change color can dynamically rebuild
-                      key: UniqueKey(),
-                      itemCount: 36,
-                      //squares kept in 10x10 gridview
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 6,
-                          crossAxisSpacing: 0,
-                          mainAxisSpacing: 0
-                      ),
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        return maze2.button_grid[index];
-
-                      }
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: IconButton(
-                    icon: Icon(Icons.help),
-                    onPressed:() {
-                      Navigator.push(
-                        context,
-                        new MaterialPageRoute(builder: (ctxt) => new SecondScreen()),
-                      );
-                    },
-                  ),
-                )
-              ]
-          ),
+          backgroundColor: Colors.cyan,
+          body: Column(children: <Widget>[
+            Expanded(
+              child: GridView.builder(
+                  //uniqueKey utilized so buttons that need to change color can dynamically rebuild
+                  key: UniqueKey(),
+                  itemCount: 36,
+                  //squares kept in 10x10 gridview
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 6,
+                      crossAxisSpacing: 0,
+                      mainAxisSpacing: 0),
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return maze2.button_grid[index];
+                  }),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: Icon(Icons.help),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (ctxt) => new SecondScreen()),
+                  );
+                },
+              ),
+            )
+          ]),
         ),
       ),
     );
   }
 }
+
 //homepage class initialized as class that contains everything
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({required this.title});
   final String title;
 
   @override
-  //state set- shouldn't need to change much since maze class is thing thats changing
+  //state set- shouldn't need to change much since maze class is thing that's changing
   _MyHomePageState createState() => _MyHomePageState();
 }
-class _MyHomePageState extends State<MyHomePage> {
 
+class _MyHomePageState extends State<MyHomePage> {
   double getSmallestDimension() {
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    double height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     print("w: " + width.toString() + " h: " + height.toString());
     // return the lesser of the two
     // var result =  (height > width) ? width : height;
-    if (height>width) {
-    return width;
+    if (height > width) {
+      return width;
     } else {
-    return height;
+      return height;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Center(child: Text("GMT")),
-        ),
-        body: ConstrainedBox(
+      appBar: AppBar(
+        title: Center(child: Text("GMT")),
+      ),
+      body: ConstrainedBox(
           // // trying to constrain the dimensions on web and desktop
           constraints: BoxConstraints(
             maxHeight: getSmallestDimension(),
@@ -461,8 +460,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           child: Center(
             child: maze2,
-          )
-      ),
+          )),
     );
   }
 }

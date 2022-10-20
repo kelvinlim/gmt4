@@ -3,7 +3,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'dart:async';
 import 'dart:convert';
 
-String serverURL = 'https://lnpitest.northcentralus.cloudapp.azure.com/dend/posts';
+String url = 'https://lnpitest.northcentralus.cloudapp.azure.com/dend/posts';
+Uri serverURL =
+    Uri.parse('https://lnpitest.northcentralus.cloudapp.azure.com/dend/posts');
 
 @JsonSerializable(nullable: false)
 Data _$DataFromJson(Map<String, dynamic> json) {
@@ -16,11 +18,11 @@ Data _$DataFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
-  'studycode': instance.studycode,
-  'guid': instance.guid,
-  'data_version': instance.data_version,
-  'data': instance.data,
-};
+      'studycode': instance.studycode,
+      'guid': instance.guid,
+      'data_version': instance.data_version,
+      'data': instance.data,
+    };
 
 class Data {
   final String studycode;
@@ -29,10 +31,10 @@ class Data {
   final String data_version;
 
   Data({
-    this.studycode,
-    this.guid,
-    this.data_version,
-    this.data,
+    required this.studycode,
+    required this.guid,
+    required this.data_version,
+    required this.data,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
@@ -68,12 +70,11 @@ Future<Data> createData(
 }
 
 void main() {
-
-  var dict = {'path':[1,2,3,4], 'moves': [1,2,3,4]};
+  var dict = {
+    'path': [1, 2, 3, 4],
+    'moves': [1, 2, 3, 4]
+  };
   String test = json.encode(dict);
 
   createData("khalid", "ziyan", "hello", test);
-
 }
-
-

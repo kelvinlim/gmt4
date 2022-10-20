@@ -5,24 +5,22 @@ import 'dart:math';
 import 'main.dart';
 
 void fillMaze() {
-
-  mat= [for(var i=0; i<100;i++) i];
-  path= genPath(mat);
+  mat = [for (var i = 0; i < 100; i++) i];
+  path = genPath(mat);
   //clear board
   for (int i = 0; i < 100; i++) {
     (maze1.button_grid[i]).onPath = 0;
   }
 
   // Generate random new maze
-  for(int j=0; j<27; j++) {
-    (maze1.button_grid[path[j]]).onPath=1;
+  for (int j = 0; j < 27; j++) {
+    (maze1.button_grid[path[j]]).onPath = 1;
   }
 }
 
-
 List genPath(List mat) {
-  var path = new List();
-  var possible = new List();
+  var path = [];
+  var possible = [];
   int naughty = 0;
   final _random = new Random();
   int move = 0;
@@ -107,10 +105,4 @@ List genPath(List mat) {
   return path;
 }
 
-List<int>mat= [for(var i=0; i<100;i++) i];
-
-
-
-
-
-
+List<int> mat = [for (var i = 0; i < 100; i++) i];

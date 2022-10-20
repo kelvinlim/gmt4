@@ -6,14 +6,13 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'PathGeneration.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'server.dart';
+//import 'server.dart';
 import 'startingScreen.dart';
 import 'Maze.dart';
 import 'userIDD.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'url_args.dart';
-
-import 'package:just_audio/just_audio.dart';
+//import 'url_args.dart';
+//import 'package:just_audio/just_audio.dart';
 
 //initialize new maze
 maze maze1 = new maze();
@@ -37,10 +36,12 @@ bool timeOut =
 var dateTime = DateTime.now();
 int attemptNum = 1;
 int consecErrors = 0;
-int recentMove = 0; //records last move of user regardless of corectness
+int recentMove = 0; //records last move of user regardless of correctness
 //final  AudioCache audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
 String subjectID = 'urlTest'; //subject ID that is in url
 Map<String, String> urlArgs = {};
+int trials = 1;
+List dataList = [];
 
 void main() {
   //manually fill in maze
@@ -48,21 +49,20 @@ void main() {
   {
     maze1.button_grid[path[i]].onPath=1;
   }*/
-
   for (int j = 0; j < 27; j++) {
     (maze1.button_grid[path[j]]).onPath = 1;
   }
 
   return runApp(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Memory Maker'),
-          backgroundColor: Colors.cyan,
-        ),
-        backgroundColor: Colors.blue,
-        body: startingScreen(),
+    home: Scaffold(
+      appBar: AppBar(
+        title: Text('Memory Maker'),
+        backgroundColor: Colors.cyan,
       ),
-      onGenerateRoute: (settings) {
+      backgroundColor: Colors.blue,
+      body: SubjectIDPage(),
+    ),
+    /*onGenerateRoute: (settings) {
         print("settings.name " + settings.name);
 
         urlArgs = getURLArgs(settings.name);
@@ -84,5 +84,6 @@ void main() {
               builder: (context) => startingScreen(),
             );
         }
-      }));
+      }*/
+  ));
 }
